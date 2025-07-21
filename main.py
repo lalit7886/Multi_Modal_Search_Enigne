@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException, Depends
 import services, models,schemas
 from database import session_local, sql_engine, getdb
 from sqlalchemy.orm import Session
+from crawller import extract_everything, extract_link, bfs 
+
 
 app = FastAPI()
 
@@ -18,8 +20,10 @@ def get_all_pages(db: Session= Depends(getdb)):
         raise HTTPException(status_code=500, detail=str(e))
     
 @app.post("/pages", response_model=schemas.Page)
-def create_page(page: schemas.page_create, db: Session = Depends(getdb)):
+def create_page_details(page: schemas.page_create, db: Session = Depends(getdb)):
     try:
+        
+        
         return services.create_page(db, page)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
